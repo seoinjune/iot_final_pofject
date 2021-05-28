@@ -20,3 +20,9 @@ void setup() {
 		}
 	} 
 }  
+
+void loop(){
+  
+}
+
+//확인 완료
