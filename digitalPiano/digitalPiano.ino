@@ -22,11 +22,8 @@ void setup() {
 }  
 
 void loop(){
-<<<<<<< HEAD:digitalPiano/digitalPiano.ino
-  
+
 }
 
-//확인 완료
-=======
-}
->>>>>>> bede5b0e3f954db97c506abe9fe984861c5f63ed:digitalPiano.ino
+//확인 완료(서호)
+//확인완료 (인준)
