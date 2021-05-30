@@ -22,12 +22,12 @@ String stringTwo;
 #define NOTE_G5 784 //솔
 #define NOTE_A5 880 //라
 #define NOTE_B5 988 //시
-#define NOTE_C6 1047 //도
 
-const byte meloytPin[] = {9,8,7,6,5,4,3,2}; //스위치 버튼
-const byte tonepin = 12; //피에조 부저
-const int melody[] = {NOTE_C5,NOTE_D5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_B5,NOTE_C6}; //도레미파솔라시도
+const byte meloytPin[] = {6,7,8,9,10,11,12}; //스위치 버튼
+const byte tonepin = 13; //피에조 부저
 int noteDurations = 50; //톤 길이
+
+int airplane[] = {NOTE_E5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_E5,NOTE_E5,NOTE_E5};//솔솔라라솔솔미
 
 void setup() {
 	Serial.begin(74880);
@@ -44,13 +44,14 @@ void setup() {
 		else{
 			delay(100); 
 			Serial.printf("Connection Failed, Reason=%d",connectResult);
-    }
+		}
 	} 
   
 	//LCD
 	lcd.init();                 
 	lcd.backlight();
-  
+	pinMode(4, OUTPUT);
+	pinMode(5, OUTPUT);
 	//mqtt
   
 	myMQTTClient.setClient(myTCPClient);
@@ -61,21 +62,9 @@ void setup() {
 	Serial.printf("MQTT Connectrion Result : %d\r\n",mqttConnectResult);
 	myMQTTClient.subscribe("MJU/IOT/DigitalPiano");
 
- for(int i=0; i<8; i++){
-  pinMode(meloytPin[i], INPUT_PULLUP); //내부풀업스위치 지정
-
-  /*pinMode(5, OUTPUT); //디지털 5번핀 출력모드로 설정
-  pinMode(6, INPUT); //디지털 6번핀 입력모드로 설정
-  pinMode(7, INPUT);
-  pinMode(8, INPUT);
-  pinMode(9, INPUT);
-  pinMode(10, INPUT);
-  pinMode(11, INPUT);
-  pinMode(12, INPUT);
-  pinMode(13, INPUT);
-  //디지털 코드2*/
-  
- }
+	for(int i=0; i<7; i++){
+		pinMode(meloytPin[i], INPUT_PULLUP); //내부풀업스위치 지정
+  	}
 }
 
 
@@ -105,27 +94,7 @@ unsigned long long lastMs=0;//64
 void loop(){
 	if(millis() - lastMs >= DELAY_MS){
 		lastMs= millis();
-		millis(); // ESP8266이 켜지고나서 몇ms가 지났는가??
-
-   for(int i=0; i<8; i++){ //8개 건반을 빠르게 체크
-    if(digitalRead(meloytPin[1])==LOW){ //내부풀업스위치 번튼 누르면...
-      tone(tonepin, meloytPin[1], noteDurations); //해당 스위치 버튼 음 출력
-      delay(noteDurations); //음길이 최소
-      noTone(tonepin); //음 중단
-    }
-   }
-
-   /*if(digitalRead(13)==HIGH{tone(5,523.3);} //13번핀에 HIGH 신호 입력되면 5번핀 주파수 신호 361.6 출력
-   else if(digitalRead(12)==HIGH{tone(5,493.9);}
-   else if(digitalRead(11)==HIGH{tone(5,440.0);}
-   else if(digitalRead(10)==HIGH{tone(5,392.0);}
-   else if(digitalRead(9)==HIGH{tone(5,349.2);}
-   else if(digitalRead(8)==HIGH{tone(5,329.6);}
-   else if(digitalRead(7)==HIGH{tone(5,290.1);}
-   else if(digitalRead(6)==HIGH{tone(5,261.6);}
-   else{(noTone(5);}
-   //디지털 코드2*/
-    
+		millis(); // ESP8266이 켜지고나서 몇ms가 지났는가??    
 		if (stringTwo.equals("설명서")){
 			myMQTTClient.publish("MJU/IOT/DigitalPiano","1.설명서입니다.");  
 			delay(1500);
@@ -137,5 +106,13 @@ void loop(){
 		}
 
 	}
+	for(int t=0; t<7; t++){ //7개 건반을 빠르게 체크
+		if(digitalRead(meloytPin[t])==LOW){ //내부풀업스위치 번튼 누르면...
+			tone(tonepin, meloytPin[t], noteDurations); //해당 스위치 버튼 음 출력
+			delay(noteDurations); //음길이 최소
+			noTone(tonepin); //음 중단
+		}
+	}
+
 	myMQTTClient.loop();
 }
