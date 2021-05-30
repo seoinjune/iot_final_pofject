@@ -63,6 +63,18 @@ void setup() {
 
  for(int i=0; i<8; i++){
   pinMode(meloytPin[i], INPUT_PULLUP); //내부풀업스위치 지정
+
+  /*pinMode(5, OUTPUT); //디지털 5번핀 출력모드로 설정
+  pinMode(6, INPUT); //디지털 6번핀 입력모드로 설정
+  pinMode(7, INPUT);
+  pinMode(8, INPUT);
+  pinMode(9, INPUT);
+  pinMode(10, INPUT);
+  pinMode(11, INPUT);
+  pinMode(12, INPUT);
+  pinMode(13, INPUT);
+  //디지털 코드2*/
+  
  }
 }
 
@@ -102,6 +114,17 @@ void loop(){
       noTone(tonepin); //음 중단
     }
    }
+
+   /*if(digitalRead(13)==HIGH{tone(5,523.3);} //13번핀에 HIGH 신호 입력되면 5번핀 주파수 신호 361.6 출력
+   else if(digitalRead(12)==HIGH{tone(5,493.9);}
+   else if(digitalRead(11)==HIGH{tone(5,440.0);}
+   else if(digitalRead(10)==HIGH{tone(5,392.0);}
+   else if(digitalRead(9)==HIGH{tone(5,349.2);}
+   else if(digitalRead(8)==HIGH{tone(5,329.6);}
+   else if(digitalRead(7)==HIGH{tone(5,290.1);}
+   else if(digitalRead(6)==HIGH{tone(5,261.6);}
+   else{(noTone(5);}
+   //디지털 코드2*/
     
 		if (stringTwo.equals("설명서")){
 			myMQTTClient.publish("MJU/IOT/DigitalPiano","1.설명서입니다.");  
