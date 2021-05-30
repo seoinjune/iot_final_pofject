@@ -88,7 +88,25 @@ void MQTTcb(const char topic[], byte *data, unsigned int length){
 	stringTwo=tempbuffer;	
 }
 
-#define DELAY_MS 2000
+
+void play_sing(){
+	for(int t=0; t<7; t++){ //7개 건반을 빠르게 체크
+		if(digitalRead(meloytPin[t])==LOW){ //내부풀업스위치 번튼 누르면...
+			tone(tonepin, meloytPin[t], noteDurations); //해당 스위치 버튼 음 출력
+			delay(noteDurations); //음길이 최소
+			noTone(tonepin); //음 중단
+		}
+	}	
+	if (stringTwo.equals("비행기")){
+		for (int i=0; i< sizeof(airplane);i++){
+			tone(tonepin, airplane[i], noteDurations); //해당 스위치 버튼 음 출력
+			delay(noteDurations); //음길이 최소
+			noTone(tonepin); //음 중단
+		}
+	} 
+}
+
+#define DELAY_MS 1500
 unsigned long long lastMs=0;//64
 
 void loop(){
@@ -97,22 +115,15 @@ void loop(){
 		millis(); // ESP8266이 켜지고나서 몇ms가 지났는가??    
 		if (stringTwo.equals("설명서")){
 			myMQTTClient.publish("MJU/IOT/DigitalPiano","1.설명서입니다.");  
-			delay(1500);
+			delay(DELAY_MS);
 			myMQTTClient.publish("MJU/IOT/DigitalPiano","2.토픽입력창에 원하는 곡을 입력하시면 재생됩니다.");  
-			delay(1500);
+			delay(DELAY_MS);
 			myMQTTClient.publish("MJU/IOT/DigitalPiano","3.가능한 곡 리스트 : 비행기, 학교종, 산토끼");  
-			delay(1500);
-			
-		}
-
-	}
-	for(int t=0; t<7; t++){ //7개 건반을 빠르게 체크
-		if(digitalRead(meloytPin[t])==LOW){ //내부풀업스위치 번튼 누르면...
-			tone(tonepin, meloytPin[t], noteDurations); //해당 스위치 버튼 음 출력
-			delay(noteDurations); //음길이 최소
-			noTone(tonepin); //음 중단
+			delay(DELAY_MS);		
 		}
 	}
-
+	
+	play_sing()
+	Lcd_print()
 	myMQTTClient.loop();
 }
