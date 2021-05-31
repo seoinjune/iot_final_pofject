@@ -27,7 +27,14 @@ const byte meloytPin[] = {6,7,8,9,10,11,12}; //스위치 버튼
 const byte tonepin = 13; //피에조 부저
 int noteDurations = 50; //톤 길이
 
-int airplane[] = {NOTE_E5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_E5,NOTE_E5,NOTE_E5};//솔솔라라솔솔미
+int schoolbell[] = {NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5
+                    NOTE_G5,NOTE_G5,NOTE_E5,NOTE_E5,NOTE_D5
+                    NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5
+                    NOTE_G5,NOTE_E5,NOTE_D5,NOTE_E5,NOTE_C5}; //솔솔라라솔솔미 솔솔미미레 솔솔라라솔솔미 솔미레미도
+int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5
+                  NOTE_G5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5
+                  NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5
+                  NOTE_G5,NOTE_G5,NOTE_A5,NOTE_G5,NOTE_F5}; //라솔파솔라라라 솔솔솔라라라 라솔파솔라라라 솔솔라솔파
 
 void setup() {
 	Serial.begin(74880);
