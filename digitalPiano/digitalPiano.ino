@@ -35,6 +35,11 @@ int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5
                   NOTE_G5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5
                   NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5
                   NOTE_G5,NOTE_G5,NOTE_A5,NOTE_G5,NOTE_F5}; //라솔파솔라라라 솔솔솔라라라 라솔파솔라라라 솔솔라솔파
+int howlsmovingcastle[] = {NOTE_D5,NOTE_G5,NOTE_B5,NOTE_D5,NOTE_D5,NOTE_C5,NOTE_B5,NOTE_A5,NOTE_B5,NOTE_G5,
+                           NOTE_B5,NOTE_D5,NOTE_G5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_F5,NOTE_E5,NOTE_F5,NOTE_A5,
+                           NOTE_C5,NOTE_F5,NOTE_A5,NOTE_G5,NOTE_F5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_F5,NOTE_E5,
+                           NOTE_D5,NOTE_C5,NOTE_B5,NOTE_C5,NOTE_D5,NOTE_C5,NOTE_G5,NOTE_A5}
+                           //-레-솔-시레레도-시-라-시-솔-시레솔솔솔라파미파-라도#파라솔파미파솔파미레도-시도레도-솔-라
 
 void setup() {
 	Serial.begin(74880);
