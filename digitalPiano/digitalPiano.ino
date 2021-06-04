@@ -76,9 +76,16 @@ void setup() {
 	myMQTTClient.subscribe("MJU/IOT/DigitalPiano");
 
 	pinMode(tonepin, OUTPUT);
-	for(int i=0; i<7; i++){
+  pinMode(meloytPin[0], INPUT_PULLUP);
+  pinMode(meloytPin[1], INPUT_PULLUP);
+  pinMode(meloytPin[2], INPUT_PULLUP);
+  pinMode(meloytPin[3], INPUT_PULLUP);
+  pinMode(meloytPin[4], INPUT_PULLUP);
+  pinMode(meloytPin[5], INPUT_PULLUP);
+  pinMode(meloytPin[6], INPUT_PULLUP);
+	/*for(int i=0; i<7; i++){
 		pinMode(meloytPin[i], INPUT_PULLUP); //내부풀업스위치 지정
-  	}
+  	}*/
 }
 
 
