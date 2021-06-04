@@ -1,5 +1,7 @@
 //Digital Piano Project
+  git config --global user.email "sij9323@mju.ac.kr"
 
+  git config --global user.name "Seoinjune"
 #define LCD_I2C 0x27
 
 #include <ESP8266WiFi.h>
