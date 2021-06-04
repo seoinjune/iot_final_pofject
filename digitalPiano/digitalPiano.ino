@@ -1,7 +1,5 @@
 //Digital Piano Project
-  git config --global user.email "sij9323@mju.ac.kr"
 
-  git config --global user.name "Seoinjune"
 #define LCD_I2C 0x27
 
 #include <ESP8266WiFi.h>
@@ -26,16 +24,17 @@ String stringTwo;
 #define NOTE_B5 988 //시
 
 const byte meloytPin[] = {6,7,8,9,10,11,12}; //스위치 버튼
+const byte meloyttone[] = {NOTE_C5,NOTE_D5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_B5};
 const byte tonepin = 13; //피에조 부저
 int noteDurations = 50; //톤 길이
 
-int schoolbell[] = {NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5
-                    NOTE_G5,NOTE_G5,NOTE_E5,NOTE_E5,NOTE_D5
-                    NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5
+int schoolbell[] = {NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5,
+                    NOTE_G5,NOTE_G5,NOTE_E5,NOTE_E5,NOTE_D5,
+                    NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5,
                     NOTE_G5,NOTE_E5,NOTE_D5,NOTE_E5,NOTE_C5}; //솔솔라라솔솔미 솔솔미미레 솔솔라라솔솔미 솔미레미도
-int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5
-                  NOTE_G5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5
-                  NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5
+int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,
+                  NOTE_G5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,
+                  NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,
                   NOTE_G5,NOTE_G5,NOTE_A5,NOTE_G5,NOTE_F5}; //라솔파솔라라라 솔솔솔라라라 라솔파솔라라라 솔솔라솔파
 int howlsmovingcastle[] = {NOTE_D5,NOTE_G5,NOTE_B5,NOTE_D5,NOTE_D5,NOTE_C5,NOTE_B5,NOTE_A5,NOTE_B5,NOTE_G5,
                            NOTE_B5,NOTE_D5,NOTE_G5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_F5,NOTE_E5,NOTE_F5,NOTE_A5,
@@ -76,6 +75,7 @@ void setup() {
 	Serial.printf("MQTT Connectrion Result : %d\r\n",mqttConnectResult);
 	myMQTTClient.subscribe("MJU/IOT/DigitalPiano");
 
+	pinMode(tonepin, OUTPUT);
 	for(int i=0; i<7; i++){
 		pinMode(meloytPin[i], INPUT_PULLUP); //내부풀업스위치 지정
   	}
@@ -106,7 +106,7 @@ void MQTTcb(const char topic[], byte *data, unsigned int length){
 void play_sing(){
 	for(int t=0; t<7; t++){ //7개 건반을 빠르게 체크
 		if(digitalRead(meloytPin[t])==LOW){ //내부풀업스위치 번튼 누르면...
-			tone(tonepin, meloytPin[t], noteDurations); //해당 스위치 버튼 음 출력
+			tone(tonepin, meloyttone[t], noteDurations); //해당 스위치 버튼 음 출력
 			delay(noteDurations); //음길이 최소
 			noTone(tonepin); //음 중단
 		}
@@ -137,7 +137,7 @@ void loop(){
 		}
 	}
 	
-	play_sing()
-	Lcd_print()
+	play_sing();
+	Lcd_print();
 	myMQTTClient.loop();
 }
