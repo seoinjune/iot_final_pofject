@@ -23,9 +23,9 @@ String stringTwo;
 #define NOTE_A5 880 //라
 #define NOTE_B5 988 //시
 
-const byte meloytPin[] = {6,7,8,9,10,11,12}; //스위치 버튼
-const byte meloyttone[] = {NOTE_C5,NOTE_D5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_B5};
-const byte tonepin = 13; //피에조 부저
+const int meloytPin[] = {10,3,13,12,14,2,0}; //스위치 버튼
+const int meloyttone[] = {NOTE_C5,NOTE_D5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_B5};
+const int tonepin = 15; //피에조 부저
 int noteDurations = 50; //톤 길이
 
 int schoolbell[] = {NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5,
@@ -39,7 +39,7 @@ int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,
 int howlsmovingcastle[] = {NOTE_D5,NOTE_G5,NOTE_B5,NOTE_D5,NOTE_D5,NOTE_C5,NOTE_B5,NOTE_A5,NOTE_B5,NOTE_G5,
                            NOTE_B5,NOTE_D5,NOTE_G5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_F5,NOTE_E5,NOTE_F5,NOTE_A5,
                            NOTE_C5,NOTE_F5,NOTE_A5,NOTE_G5,NOTE_F5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_F5,NOTE_E5,
-                           NOTE_D5,NOTE_C5,NOTE_B5,NOTE_C5,NOTE_D5,NOTE_C5,NOTE_G5,NOTE_A5}
+                           NOTE_D5,NOTE_C5,NOTE_B5,NOTE_C5,NOTE_D5,NOTE_C5,NOTE_G5,NOTE_A5};
                            //-레-솔-시레레도-시-라-시-솔-시레솔솔솔라파미파-라도#파라솔파미파솔파미레도-시도레도-솔-라
 
 void setup() {
@@ -65,6 +65,7 @@ void setup() {
 	lcd.backlight();
 	pinMode(4, OUTPUT);
 	pinMode(5, OUTPUT);
+	Lcd_control = 0;
 	//mqtt
   
 	myMQTTClient.setClient(myTCPClient);
@@ -75,17 +76,15 @@ void setup() {
 	Serial.printf("MQTT Connectrion Result : %d\r\n",mqttConnectResult);
 	myMQTTClient.subscribe("MJU/IOT/DigitalPiano");
 
+
 	pinMode(tonepin, OUTPUT);
-  pinMode(meloytPin[0], INPUT_PULLUP);
-  pinMode(meloytPin[1], INPUT_PULLUP);
-  pinMode(meloytPin[2], INPUT_PULLUP);
-  pinMode(meloytPin[3], INPUT_PULLUP);
-  pinMode(meloytPin[4], INPUT_PULLUP);
-  pinMode(meloytPin[5], INPUT_PULLUP);
-  pinMode(meloytPin[6], INPUT_PULLUP);
-	/*for(int i=0; i<7; i++){
-		pinMode(meloytPin[i], INPUT_PULLUP); //내부풀업스위치 지정
-  	}*/
+	pinMode(meloytPin[0], INPUT_PULLUP);
+	pinMode(meloytPin[1], INPUT_PULLUP);
+	pinMode(meloytPin[2], INPUT_PULLUP);
+	pinMode(meloytPin[3], INPUT_PULLUP);
+	pinMode(meloytPin[4], INPUT_PULLUP);
+	pinMode(meloytPin[5], INPUT_PULLUP);
+	pinMode(meloytPin[6], INPUT_PULLUP);
 }
 
 
@@ -113,7 +112,9 @@ void MQTTcb(const char topic[], byte *data, unsigned int length){
 void play_sing(){
 	for(int t=0; t<7; t++){ //7개 건반을 빠르게 체크
 		if(digitalRead(meloytPin[t])==LOW){ //내부풀업스위치 번튼 누르면...
+			Serial.printf("%d 입력!\r\n",meloyttone[t]);
 			tone(tonepin, meloyttone[t], noteDurations); //해당 스위치 버튼 음 출력
+
 			delay(noteDurations); //음길이 최소
 			noTone(tonepin); //음 중단
 		}
