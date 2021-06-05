@@ -15,31 +15,29 @@ PubSubClient myMQTTClient; // PubSubClient Class 객체, 변수
 
 String stringTwo;
 
-#define NOTE_C5 523 //도(5옥타브 음계 데이터)
-#define NOTE_D5 587 //레
-#define NOTE_E5 659 //미
-#define NOTE_F5 698 //파
-#define NOTE_G5 784 //솔
-#define NOTE_A5 880 //라
-#define NOTE_B5 988 //시
+#define NOTE_C5 2093 //도(7옥타브 음계 데이터)
+#define NOTE_D5 2349 //레
+#define NOTE_E5 2637 //미
+#define NOTE_F5 2793 //파
+#define NOTE_G5 3135 //솔
+#define NOTE_A5 3520 //라
+#define NOTE_B5 3951 //시
 
 const int meloytPin[] = {10,3,13,12,14,2,0}; //스위치 버튼
 const int meloyttone[] = {NOTE_C5,NOTE_D5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_B5};
 const int tonepin = 15; //피에조 부저
 int noteDurations = 50; //톤 길이
 
-int schoolbell[] = {NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5,
-                    NOTE_G5,NOTE_G5,NOTE_E5,NOTE_E5,NOTE_D5,
-                    NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5,
+int schoolbell[] = {NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5,0,
+                    NOTE_G5,NOTE_G5,NOTE_E5,NOTE_E5,NOTE_D5,0,0,
+                    NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5,0,
                     NOTE_G5,NOTE_E5,NOTE_D5,NOTE_E5,NOTE_C5}; //솔솔라라솔솔미 솔솔미미레 솔솔라라솔솔미 솔미레미도
-int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,
-                  NOTE_G5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,
-                  NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,
+int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,0,
+                  NOTE_G5,NOTE_G5,NOTE_G5,0,NOTE_A5,NOTE_A5,NOTE_A5,0,
+                  NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,0,
                   NOTE_G5,NOTE_G5,NOTE_A5,NOTE_G5,NOTE_F5}; //라솔파솔라라라 솔솔솔라라라 라솔파솔라라라 솔솔라솔파
-int howlsmovingcastle[] = {NOTE_D5,NOTE_G5,NOTE_B5,NOTE_D5,NOTE_D5,NOTE_C5,NOTE_B5,NOTE_A5,NOTE_B5,NOTE_G5,
-                           NOTE_B5,NOTE_D5,NOTE_G5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_F5,NOTE_E5,NOTE_F5,NOTE_A5,
-                           NOTE_C5,NOTE_F5,NOTE_A5,NOTE_G5,NOTE_F5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_F5,NOTE_E5,
-                           NOTE_D5,NOTE_C5,NOTE_B5,NOTE_C5,NOTE_D5,NOTE_C5,NOTE_G5,NOTE_A5};
+int howlsmovingcastle[] = {293, 391, 493, 587, 587, 523, 493, 440, 493, 391, 493, 587, 783, 783, 783,
+							880, 693, 659, 698, 440, 554, 698, 880, 783, 698, 659, 698, 783, 698, 659, 587, 523, 493, 523, 587, 523, 391, 440};
                            //-레-솔-시레레도-시-라-시-솔-시레솔솔솔라파미파-라도#파라솔파미파솔파미레도-시도레도-솔-라
 
 void setup() {
@@ -92,7 +90,6 @@ void Lcd_print(){
 	if(Lcd_control==0){
 		lcd.setCursor(0, 0);
 		lcd.print("Digital Piano");
-		lcd.setCursor(0,1); 
 	}
 	else if(Lcd_control==1){
     
@@ -114,18 +111,31 @@ void play_sing(){
 		if(digitalRead(meloytPin[t])==LOW){ //내부풀업스위치 번튼 누르면...
 			Serial.printf("%d 입력!\r\n",meloyttone[t]);
 			tone(tonepin, meloyttone[t], noteDurations); //해당 스위치 버튼 음 출력
-
 			delay(noteDurations); //음길이 최소
 			noTone(tonepin); //음 중단
 		}
 	}	
 	if (stringTwo.equals("비행기")){
-		for (int i=0; i< sizeof(airplane);i++){
+		myMQTTClient.publish("MJU/IOT/DigitalPiano","재생중...!"); 
+		for (int i=0; i< sizeof(airplane)/sizeof(airplane[0]);i++){
 			tone(tonepin, airplane[i], noteDurations); //해당 스위치 버튼 음 출력
-			delay(noteDurations); //음길이 최소
+			delay(500); //음길이 최소
 			noTone(tonepin); //음 중단
+			delay(100);
 		}
-	} 
+	myMQTTClient.publish("MJU/IOT/DigitalPiano","노래 끝!"); 	
+	}
+	else if(stringTwo.equals("학교종")){
+	myMQTTClient.publish("MJU/IOT/DigitalPiano","재생중...!"); 
+		for (int i=0; i< sizeof(schoolbell)/sizeof(schoolbell[0]);i++){
+			tone(tonepin, schoolbell[i], noteDurations); //해당 스위치 버튼 음 출력
+			delay(500); //음길이 최소
+			noTone(tonepin); //음 중단
+			delay(100);
+		}
+	myMQTTClient.publish("MJU/IOT/DigitalPiano","노래 끝!"); 	
+	}
+
 }
 
 #define DELAY_MS 1500
@@ -143,6 +153,7 @@ void loop(){
 			myMQTTClient.publish("MJU/IOT/DigitalPiano","3.가능한 곡 리스트 : 비행기, 학교종, 산토끼");  
 			delay(DELAY_MS);		
 		}
+
 	}
 	
 	play_sing();
