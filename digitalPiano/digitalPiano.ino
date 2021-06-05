@@ -23,6 +23,9 @@ String stringTwo;
 #define NOTE_A5 3520 //라
 #define NOTE_B5 3951 //시
 
+
+
+
 const int meloytPin[] = {10,3,13,12,14,2,0}; //스위치 버튼
 const int meloyttone[] = {NOTE_C5,NOTE_D5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_B5};
 const int tonepin = 15; //피에조 부저
@@ -36,9 +39,6 @@ int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,0,
                   NOTE_G5,NOTE_G5,NOTE_G5,0,NOTE_A5,NOTE_A5,NOTE_A5,0,
                   NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,0,
                   NOTE_G5,NOTE_G5,NOTE_A5,NOTE_G5,NOTE_F5}; //라솔파솔라라라 솔솔솔라라라 라솔파솔라라라 솔솔라솔파
-int howlsmovingcastle[] = {293, 391, 493, 587, 587, 523, 493, 440, 493, 391, 493, 587, 783, 783, 783,
-							880, 693, 659, 698, 440, 554, 698, 880, 783, 698, 659, 698, 783, 698, 659, 587, 523, 493, 523, 587, 523, 391, 440};
-                           //-레-솔-시레레도-시-라-시-솔-시레솔솔솔라파미파-라도#파라솔파미파솔파미레도-시도레도-솔-라
 
 void setup() {
 	Serial.begin(74880);
@@ -64,6 +64,16 @@ void setup() {
 	pinMode(4, OUTPUT);
 	pinMode(5, OUTPUT);
 	Lcd_control = 0;
+	
+	lcd.createChar(0,b); lcd.createChar(1,bi); //비
+	lcd.createChar(2,h); lcd.createChar(3,han); lcd.createChar(4,hang); //행
+	lcd.createChar(5,k); //ㄱ
+	lcd.createChar(6,note);	//음표
+
+
+	lcd.createChar(7,a);  //ㅏ
+	lcd.createChar(8,ko); //교
+	lcd.createChar(9,jo); //조
 	//mqtt
   
 	myMQTTClient.setClient(myTCPClient);
@@ -88,12 +98,35 @@ void setup() {
 
 void Lcd_print(){
 	if(Lcd_control==0){
-		lcd.setCursor(0, 0);
+		lcd.init();
+		lcd.setCursor(1, 0);
 		lcd.print("Digital Piano");
 	}
 	else if(Lcd_control==1){
-    
+		lcd.init();      
+		lcd.setCursor(3, 0); lcd.write(0); //ㅂ
+		lcd.setCursor(4, 0); lcd.write(1); //ㅣ  
+		lcd.setCursor(5, 0); lcd.write(2); //ㅎ  
+		lcd.setCursor(6, 0); lcd.write(3); //ㅐ
+		lcd.setCursor(5, 1); lcd.write(4); //ㅇ  
+		lcd.setCursor(7, 0); lcd.write(5); //ㄱ 
+		lcd.setCursor(8, 0); lcd.write(1); //ㅣ      
+		lcd.setCursor(9, 0); lcd.write(6); //음표   
+		lcd.setCursor(10, 0); lcd.write(6); //음표      
+		lcd.setCursor(11, 0); lcd.write(6); //음표 		
 	}
+	else if(Lcd_control==2){
+		lcd.init();    
+		lcd.setCursor(3, 0); lcd.write(2); //ㅎ
+		lcd.setCursor(4, 0); lcd.write(7); //ㅏ
+		lcd.setCursor(3, 1); lcd.write(5); //ㄱ
+		lcd.setCursor(5, 0); lcd.write(8); //교
+		lcd.setCursor(6, 0); lcd.write(9); //조
+		lcd.setCursor(6, 1); lcd.write(4); //ㅇ
+		lcd.setCursor(7, 0); lcd.write(6);
+		lcd.setCursor(8, 0); lcd.write(6);
+		lcd.setCursor(9, 0); lcd.write(6);
+    }
 }
 
 void MQTTcb(const char topic[], byte *data, unsigned int length){
@@ -116,24 +149,28 @@ void play_sing(){
 		}
 	}	
 	if (stringTwo.equals("비행기")){
+		Lcd_control = 1;
 		myMQTTClient.publish("MJU/IOT/DigitalPiano","재생중...!"); 
+		Lcd_print();
 		for (int i=0; i< sizeof(airplane)/sizeof(airplane[0]);i++){
 			tone(tonepin, airplane[i], noteDurations); //해당 스위치 버튼 음 출력
 			delay(500); //음길이 최소
 			noTone(tonepin); //음 중단
 			delay(100);
 		}
-	myMQTTClient.publish("MJU/IOT/DigitalPiano","노래 끝!"); 	
+		myMQTTClient.publish("MJU/IOT/DigitalPiano","노래 끝!"); 	
 	}
 	else if(stringTwo.equals("학교종")){
-	myMQTTClient.publish("MJU/IOT/DigitalPiano","재생중...!"); 
+		Lcd_control = 2;
+		myMQTTClient.publish("MJU/IOT/DigitalPiano","재생중...!"); 
+		Lcd_print();
 		for (int i=0; i< sizeof(schoolbell)/sizeof(schoolbell[0]);i++){
 			tone(tonepin, schoolbell[i], noteDurations); //해당 스위치 버튼 음 출력
 			delay(500); //음길이 최소
 			noTone(tonepin); //음 중단
 			delay(100);
 		}
-	myMQTTClient.publish("MJU/IOT/DigitalPiano","노래 끝!"); 	
+		myMQTTClient.publish("MJU/IOT/DigitalPiano","노래 끝!"); 	
 	}
 
 }
@@ -150,12 +187,13 @@ void loop(){
 			delay(DELAY_MS);
 			myMQTTClient.publish("MJU/IOT/DigitalPiano","2.토픽입력창에 원하는 곡을 입력하시면 재생됩니다.");  
 			delay(DELAY_MS);
-			myMQTTClient.publish("MJU/IOT/DigitalPiano","3.가능한 곡 리스트 : 비행기, 학교종, 산토끼");  
+			myMQTTClient.publish("MJU/IOT/DigitalPiano","3.가능한 곡 리스트 : 비행기, 학교종");  
 			delay(DELAY_MS);		
 		}
 
 	}
 	
+	Lcd_control=0;
 	play_sing();
 	Lcd_print();
 	myMQTTClient.loop();
