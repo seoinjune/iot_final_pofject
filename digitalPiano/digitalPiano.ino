@@ -63,17 +63,7 @@ void setup() {
 	lcd.backlight();
 	pinMode(4, OUTPUT);
 	pinMode(5, OUTPUT);
-	Lcd_control = 0;
 	
-	lcd.createChar(0,b); lcd.createChar(1,bi); //비
-	lcd.createChar(2,h); lcd.createChar(3,han); lcd.createChar(4,hang); //행
-	lcd.createChar(5,k); //ㄱ
-	lcd.createChar(6,note);	//음표
-
-
-	lcd.createChar(7,a);  //ㅏ
-	lcd.createChar(8,ko); //교
-	lcd.createChar(9,jo); //조
 	//mqtt
   
 	myMQTTClient.setClient(myTCPClient);
@@ -104,6 +94,11 @@ void Lcd_print(){
 	}
 	else if(Lcd_control==1){
 		lcd.init();      
+		lcd.createChar(0,b); lcd.createChar(1,bi); //비
+		lcd.createChar(2,h); lcd.createChar(3,han); lcd.createChar(4,hang); //행
+		lcd.createChar(5,k); //ㄱ
+		lcd.createChar(6,note);	//음표
+		delay(50);
 		lcd.setCursor(3, 0); lcd.write(0); //ㅂ
 		lcd.setCursor(4, 0); lcd.write(1); //ㅣ  
 		lcd.setCursor(5, 0); lcd.write(2); //ㅎ  
@@ -117,6 +112,13 @@ void Lcd_print(){
 	}
 	else if(Lcd_control==2){
 		lcd.init();    
+		lcd.createChar(3,han);
+		lcd.createChar(5,k); //ㄱ
+		lcd.createChar(6,note);	//음표
+		lcd.createChar(7,a);  //ㅏ
+		lcd.createChar(8,ko); //교
+		lcd.createChar(9,jo); //조
+		delay(50);
 		lcd.setCursor(3, 0); lcd.write(2); //ㅎ
 		lcd.setCursor(4, 0); lcd.write(7); //ㅏ
 		lcd.setCursor(3, 1); lcd.write(5); //ㄱ
