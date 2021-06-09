@@ -56,12 +56,38 @@ int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,0,
 
 
 void fnRoot(void){
-
+  char tmpBuffer[2000];
+  strcpy(tmpBuffer, "<html>\r\n");
+  strcpy(tmpBuffer, "<meta charset=utf-8>");
+  strcat(tmpBuffer,"<설명서> <br>\r\n");
+  strcat(tmpBuffer,"아래의 Sing에 원하는 노래를 입력하면 재생됩니다. <br>\r\n");
+  strcat(tmpBuffer,"<br>\r\n");
+  strcat(tmpBuffer,"MQTT를 통해서도 제어 가능합니다. <br>\r\n");
+  strcat(tmpBuffer,"MQTT Topic : MJU/IOT/DigitalPiano <br>\r\n");
+  strcat(tmpBuffer,"MQTT Topic 명령어 : 설명서,노래제목 <br>\r\n");
+  strcat(tmpBuffer,"<br>\r\n");
+  strcat(tmpBuffer,"재생가능한 노래 : 학교종, 비행기 <br>\r\n");
+  strcat(tmpBuffer,"<form method=\"get\" action=\"input\">");
+  strcat(tmpBuffer,"Sing <input type=\"text\" name=\"Singname\">");
+  strcat(tmpBuffer,"<input type=\"submit\" ></form>\r\n");
+  snprintf(tmpBuffer, sizeof(tmpBuffer), "%s%s", tmpBuffer,"</html>");
+  myHttpServer.send(200,"text/html",tmpBuffer);
 }
 
 
-void fnInput(void){
 
+void fnInput(void){
+  char sing[400];
+  if (myHttpServer.hasArg("Singname")){
+    strcpy(sing, "<meta charset=utf-8>");
+    strcat(sing, myHttpServer.arg("Singname").c_str());
+  strcat(sing, " 재생중");
+  stringTwo = myHttpServer.arg("Singname");
+  myHttpServer.send(200,"text/html",sing);
+  }
+  else
+    myHttpServer.send(200,"text/plain","잘못된 입력입니다.");
+  
 }
 
 
