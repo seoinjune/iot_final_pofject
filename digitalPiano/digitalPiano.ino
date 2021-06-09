@@ -5,13 +5,14 @@
 #include <ESP8266WiFi.h>
 #include <LiquidCrystal_I2C.h>
 #include <PubSubClient.h>
-
+#include <ESP8266WebServer.h>
 
 LiquidCrystal_I2C lcd(LCD_I2C, 16, 2);  
 
 int Lcd_control =0;
 WiFiClient myTCPClient; //WiFiClient Class 객체=변수
 PubSubClient myMQTTClient; // PubSubClient Class 객체, 변수
+ESP8266WebServer myHttpServer(80);
 
 String stringTwo;
 
@@ -35,11 +36,14 @@ byte a[] = {B10000,B10000,B10000,B11100,B10000,B10000,B10000,B10000};//ㅏ
 byte ko[] = {B11111,B00001,B00001,B00001,B00000,B01010,B01010,B11111};//교
 byte jo[] = {B11111,B00100,B01010,B10001,B00100,B00100,B11111,B00000};//조
 
+char buffer[100] = {0};
 
 const int meloytPin[] = {10,3,13,12,14,2,0}; //스위치 버튼
 const int meloyttone[] = {NOTE_C5,NOTE_D5,NOTE_E5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_B5};
 const int tonepin = 15; //피에조 부저
 int noteDurations = 50; //톤 길이
+
+String IPaddress;
 
 int schoolbell[] = {NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,NOTE_G5,NOTE_E5,0,
                     NOTE_G5,NOTE_G5,NOTE_E5,NOTE_E5,NOTE_D5,0,0,
@@ -49,6 +53,17 @@ int airplane[] = {NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,0,
                   NOTE_G5,NOTE_G5,NOTE_G5,0,NOTE_A5,NOTE_A5,NOTE_A5,0,
                   NOTE_A5,NOTE_G5,NOTE_F5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_A5,0,
                   NOTE_G5,NOTE_G5,NOTE_A5,NOTE_G5,NOTE_F5}; //라솔파솔라라라 솔솔솔라라라 라솔파솔라라라 솔솔라솔파
+
+
+void fnRoot(void){
+
+}
+
+
+void fnInput(void){
+
+}
+
 
 void setup() {
 	Serial.begin(74880);
@@ -61,6 +76,9 @@ void setup() {
 	while(1){
 		if(connectResult == WL_CONNECTED){
 		Serial.printf("Connection OK!\r\n");
+		
+		sprintf(buffer, "Site %s\n", WiFi.localIP().toString().c_str());
+		Serial.println(buffer);
 		break;    }
 		else{
 			delay(100); 
@@ -84,6 +102,11 @@ void setup() {
 	Serial.printf("MQTT Connectrion Result : %d\r\n",mqttConnectResult);
 	myMQTTClient.subscribe("MJU/IOT/DigitalPiano");
 
+	//HTTP
+	
+	myHttpServer.on("/",fnRoot);
+    myHttpServer.on("/input",fnInput);
+	myHttpServer.begin();
 
 	pinMode(tonepin, OUTPUT);
 	pinMode(meloytPin[0], INPUT_PULLUP);
@@ -101,6 +124,8 @@ void Lcd_print(){
 		lcd.init();
 		lcd.setCursor(1, 0);
 		lcd.print("Digital Piano");
+		lcd.setCursor(0, 1);
+		lcd.print(buffer);
 	}
 	else if(Lcd_control==1){
 		lcd.init();      
@@ -209,4 +234,5 @@ void loop(){
 	play_sing();
 	Lcd_print();
 	myMQTTClient.loop();
+	myHttpServer.handleClient();
 }
